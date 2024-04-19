@@ -16,15 +16,28 @@ impl<'a, T> Iterator for CirculatingIterator<'a, T> {
     }
 }
 
+// here compiler add the lifetimes by itself under the hood. Recall that !
 pub trait CycleIter<T> {
     fn cycle_iter(&self) -> CirculatingIterator<T>;
 }
-
+// here compiler add the lifetimes by itself under the hood. Recall that !
 impl<T> CycleIter<T> for Vec<T> {
     fn cycle_iter(&self) -> CirculatingIterator<T> {
         CirculatingIterator {
-            container: &self,
+            container: self,
             index: 0,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn circular_iteration_works() {
+        let container = vec![1, 4, 5, 7];
+        let circular_sub_container: Vec<_> = container.cycle_iter().take(6).collect();
+        let expected = vec![&1, &4, &5, &7, &1, &4];
+        assert_eq!(circular_sub_container, expected);
     }
 }
