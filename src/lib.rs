@@ -24,7 +24,9 @@ impl GameController {
 
     pub fn add_player(&mut self, nick: String) -> Result<(), Box<dyn Error>> {
         if self.players.len() >= constants::MAX_NUMBER_OF_PLAYERS {
-            return Err("You can add {} players max.".into());
+            let mut errorMsg = String::from("Maximum number of players is: "); 
+            errorMsg.push_str(constants::MAX_NUMBER_OF_PLAYERS.to_string().as_str());
+            return Err(errorMsg.into());
         }
         self.players.push(Player {
             name: nick,
@@ -46,7 +48,9 @@ mod tests {
         let player = String::from("steve12");
         let mut gc = GameController::new();
         for _ in 0..constants::MAX_NUMBER_OF_PLAYERS {
-            _ = gc.add_player(player.clone());
+            gc.add_player(player.clone()).unwrap_or_else(|err| {
+                eprintln!("Error occured: {err}.");
+            });
         }
 
         assert_eq!(gc.number_of_players(), 2);
@@ -57,7 +61,9 @@ mod tests {
         let player = String::from("steve12");
         let mut gc = GameController::new();
         for _ in 0..constants::MAX_NUMBER_OF_PLAYERS + 5 {
-            _ = gc.add_player(player.clone());
+            gc.add_player(player.clone()).unwrap_or_else(|err| {
+                eprintln!("Error occured: {err}.");
+            });
         }
 
         assert_eq!(gc.number_of_players(), 2);

@@ -28,3 +28,15 @@ impl<T> CycleIter<T> for Vec<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn circular_iteration_works() {
+        let container = vec![1, 4, 5, 7];
+        let circular_sub_container: Vec<_> = container.cycle_iter().take(6).collect();
+        let expected = vec![&1, &4, &5, &7, &1, &4];
+        assert_eq!(circular_sub_container, expected);
+    }
+}
