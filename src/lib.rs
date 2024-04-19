@@ -1,5 +1,8 @@
-use std::io;
+use std::{error::Error, io};
 mod custom_iteration;
+mod constants {
+    pub const MAX_NUMBER_OF_PLAYERS: usize = 2;
+}
 
 pub use crate::custom_iteration::CycleIter;
 
@@ -19,31 +22,44 @@ impl GameController {
         }
     }
 
-    pub fn add_players(&mut self) {
-        while self.players.len() < 2 {
-            println!("Please enter player nick:");
-            let mut nick = String::new();
-            io::stdin()
-                .read_line(&mut nick)
-                .expect("Failed to read nick");
-            self.players.push(Player {
-                name: nick,
-                score: 0,
-            });
+    pub fn add_player(&mut self, nick: String) -> Result<(), Box<dyn Error>> {
+        if self.players.len() >= constants::MAX_NUMBER_OF_PLAYERS {
+            return Err("You can add {} players max.".into());
         }
-        println!("Players added! You can start the game!");
+        self.players.push(Player {
+            name: nick,
+            score: 0,
+        });
+        Ok(())
+    }
+
+    pub fn number_of_players(&self) -> usize {
+        self.players.len()
     }
 }
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn addition_of_players_works() {
-        let gc = GameController::new();
+    fn addition_of_players_within_specified_limit_works() {
+        let player = String::from("steve12");
+        let mut gc = GameController::new();
+        for _ in 0..constants::MAX_NUMBER_OF_PLAYERS {
+            _ = gc.add_player(player.clone());
+        }
 
+        assert_eq!(gc.number_of_players(), 2);
+    }
 
-        assert_eq!(4, 4);
+    #[test]
+    fn addition_of_more_than_specified_number_of_players_doesn_make_any_effect_works() {
+        let player = String::from("steve12");
+        let mut gc = GameController::new();
+        for _ in 0..constants::MAX_NUMBER_OF_PLAYERS + 5 {
+            _ = gc.add_player(player.clone());
+        }
+
+        assert_eq!(gc.number_of_players(), 2);
     }
 }
