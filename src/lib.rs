@@ -28,7 +28,7 @@ impl GameController {
             errorMsg.push_str(constants::MAX_NUMBER_OF_PLAYERS.to_string().as_str());
             return Err(errorMsg.into());
         }
-        self.players.push(Player::new(nick, 0));
+        self.players.push(Player::new(nick));
         Ok(())
     }
 
