@@ -1,12 +1,9 @@
 use std::{error::Error, io};
+
 mod custom_iteration;
 mod player;
-mod constants {
-    pub const MAX_NUMBER_OF_PLAYERS: usize = 2;
-    pub const WINNING_VALUE: u32 = 50;
-    pub const ROCKET_ENGINE_BOOST_PREMIUM: u32 = 5;
-    pub const ROCKET_ENGINE_LAUNCHES: usize = 5;
-}
+mod constants;
+mod tools;
 
 use crate::custom_iteration::CycleIter;
 use crate::player::Player;

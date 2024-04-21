@@ -1,8 +1,10 @@
 use crate::constants;
 use crate::Player;
 use std::io;
+use crate::tools;
 
 // Check if it is acccessible only from player module
+
 
 pub fn take_user_option() -> usize {
     loop {
@@ -38,7 +40,8 @@ pub fn run(player: &mut Player) {
                 }
             }
             2 => {
-                println!("The event has been drawn!");
+                let event = tools::draw_event();
+                println!("{}: {} pts", event.0, event.1);
                 break;
             }
             _ => {
