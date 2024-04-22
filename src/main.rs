@@ -9,6 +9,6 @@ fn main() {
     let gm = gm.start_game(&mut std_input_reader);
 
     let winner = gm.get_winner();
-
+    // Encapsulate it in lib! In function like finish_game() etc
     println!("The winner is {} !!! :)", winner.name());
 }

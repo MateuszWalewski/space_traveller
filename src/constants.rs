@@ -1,5 +1,13 @@
+#[cfg(test)]
 pub const MAX_NUMBER_OF_PLAYERS: usize = 2;
+#[cfg(test)]
 pub const WINNING_VALUE: i32 = 10;
+
+#[cfg(not(test))]
+pub const MAX_NUMBER_OF_PLAYERS: usize = 2;
+#[cfg(not(test))]
+pub const WINNING_VALUE: i32 = 10;
+
 pub const ROCKET_ENGINE_BOOST_PREMIUM: i32 = 5;
 pub const ROCKET_ENGINE_LAUNCHES: usize = 5;
 

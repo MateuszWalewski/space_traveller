@@ -62,7 +62,7 @@ impl GameManager {
         self.players.len()
     }
 
-    pub fn get_players(&self) -> &Vec<Player>  {
+    pub fn get_players(&self) -> &Vec<Player> {
         &self.players
     }
 }
@@ -75,4 +75,3 @@ impl PostGameManager {
             .expect("On this stage we have the winner for sure!")
     }
 }
-
