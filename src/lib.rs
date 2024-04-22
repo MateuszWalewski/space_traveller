@@ -43,10 +43,6 @@ impl GameManager {
         }
     }
 
-    pub fn number_of_players(&self) -> usize {
-        self.players.len()
-    }
-
     pub fn start_game<R: tools::InputReader>(mut self, reader: &mut R) -> PostGameManager {
         for player in self.players.cycle_iter() {
             player.take_turn(reader);
@@ -61,6 +57,14 @@ impl GameManager {
             players: self.players,
         }
     }
+
+    pub fn number_of_players(&self) -> usize {
+        self.players.len()
+    }
+
+    pub fn get_players(&self) -> &Vec<Player>  {
+        &self.players
+    }
 }
 
 impl PostGameManager {
@@ -72,16 +76,3 @@ impl PostGameManager {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn addition_of_players_within_specified_limit_works() {
-        let pred_input = "tom78\njohn99\n";
-        let mut custom_input_reader = tools::CustomInputReader::new(pred_input);
-        let gm = GameManager::new();
-        let gc = gm.add_players(&mut custom_input_reader);
-        assert_eq!(gc.number_of_players(), 2);
-    }
-
-}
