@@ -1,7 +1,6 @@
 use crate::constants;
 use crate::tools;
 use crate::Player;
-use std::io;
 
 // Check if it is acccessible only from player module
 

@@ -1,5 +1,3 @@
-use std::{error::Error, io};
-
 mod constants;
 mod custom_iteration;
 mod player;
@@ -8,39 +6,69 @@ pub mod tools;
 use crate::custom_iteration::CycleIter;
 use crate::player::Player;
 
-pub struct GameController {
+pub struct PreGameManager {
     players: Vec<Player>,
 }
 
-impl GameController {
-    pub fn new() -> Self {
-        GameController {
-            players: Vec::new(),
+pub struct GameManager {
+    players: Vec<Player>,
+}
+
+pub struct PostGameManager {
+    players: Vec<Player>,
+}
+
+impl PreGameManager {
+    pub fn add_players<R: tools::InputReader>(mut self, reader: &mut R) -> GameManager {
+        for _ in 0..constants::MAX_NUMBER_OF_PLAYERS {
+            println!("Please type a nick for the new player");
+            let mut nick = String::new();
+            reader
+                .read_line(&mut nick)
+                .expect("Failed to parse a choice");
+
+            println!("The player: {} has been added.", nick);
+            self.players.push(Player::new(nick));
+        }
+        GameManager {
+            players: self.players,
         }
     }
+}
 
-    pub fn add_player(&mut self, nick: String) -> Result<(), Box<dyn Error>> {
-        if self.players.len() >= constants::MAX_NUMBER_OF_PLAYERS {
-            let mut errorMsg = String::from("The maximum number of players is: ");
-            errorMsg.push_str(constants::MAX_NUMBER_OF_PLAYERS.to_string().as_str());
-            return Err(errorMsg.into());
+impl GameManager {
+    pub fn new() -> PreGameManager {
+        PreGameManager {
+            players: Vec::new(),
         }
-        self.players.push(Player::new(nick));
-        Ok(())
     }
 
     pub fn number_of_players(&self) -> usize {
         self.players.len()
     }
 
-    pub fn start_game<R: tools::InputReader>(&mut self, reader: &mut R) -> Option<&Player> {
+    pub fn start_game<R: tools::InputReader>(mut self, reader: &mut R) -> PostGameManager {
         for player in self.players.cycle_iter() {
             player.take_turn(reader);
-            if player.score() == constants::WINNING_VALUE {
-                return Some(player);
+            if player.score() >= constants::WINNING_VALUE {
+                player.mark_as_winner();
+                return PostGameManager {
+                    players: self.players,
+                };
             }
         }
-        None
+        PostGameManager {
+            players: self.players,
+        }
+    }
+}
+
+impl PostGameManager {
+    pub fn get_winner(&self) -> &Player {
+        self.players
+            .iter()
+            .find(|x| x.is_winner())
+            .expect("On this stage we have the winner for sure!")
     }
 }
 
@@ -49,27 +77,11 @@ mod tests {
     use super::*;
     #[test]
     fn addition_of_players_within_specified_limit_works() {
-        let player = String::from("steve12");
-        let mut gc = GameController::new();
-        for _ in 0..constants::MAX_NUMBER_OF_PLAYERS {
-            gc.add_player(player.clone()).unwrap_or_else(|err| {
-                eprintln!("Error occured: {err}.");
-            });
-        }
-
+        let pred_input = "tom78\njohn99\n";
+        let mut custom_input_reader = tools::CustomInputReader::new(pred_input);
+        let gm = GameManager::new();
+        let gc = gm.add_players(&mut custom_input_reader);
         assert_eq!(gc.number_of_players(), 2);
     }
 
-    #[test]
-    fn addition_of_more_than_specified_number_of_players_doesnt_make_any_effect_works() {
-        let player = String::from("steve12");
-        let mut gc = GameController::new();
-        for _ in 0..constants::MAX_NUMBER_OF_PLAYERS + 5 {
-            gc.add_player(player.clone()).unwrap_or_else(|err| {
-                eprintln!("Error occured: {err}.");
-            });
-        }
-
-        assert_eq!(gc.number_of_players(), 2);
-    }
 }
