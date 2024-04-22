@@ -1,18 +1,16 @@
 use crate::constants;
+use crate::tools;
 use crate::Player;
 use std::io;
-use crate::tools;
 
 // Check if it is acccessible only from player module
 
-
-pub fn take_user_option() -> usize {
+pub fn take_user_option<R: tools::InputReader>(reader: &mut R) -> usize {
     loop {
         let mut choice = String::new();
-        io::stdin()
+        reader
             .read_line(&mut choice)
             .expect("Failed to parse a choice");
-
         let choice: usize = match choice.trim().parse() {
             Ok(num) => num,
             Err(_) => {
@@ -25,8 +23,8 @@ pub fn take_user_option() -> usize {
     }
 }
 
-pub fn run(player: &mut Player) {
-    let mut choice = take_user_option();
+pub fn run<R: tools::InputReader>(player: &mut Player, reader: &mut R) {
+    let mut choice = take_user_option(reader);
     loop {
         match choice {
             1 => {
@@ -36,7 +34,7 @@ pub fn run(player: &mut Player) {
                     break;
                 } else {
                     println!("You've used all launches. Draw an event!");
-                    choice = take_user_option();
+                    choice = take_user_option(reader);
                 }
             }
             2 => {
@@ -46,7 +44,7 @@ pub fn run(player: &mut Player) {
             }
             _ => {
                 println!("Option unavailable. Try again!");
-                choice = take_user_option();
+                choice = take_user_option(reader);
             }
         }
     }

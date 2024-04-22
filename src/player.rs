@@ -1,4 +1,5 @@
 use crate::constants;
+use crate::tools;
 
 mod engine;
 
@@ -17,7 +18,7 @@ impl Player {
         }
     }
 
-    pub fn take_turn(&mut self) {
+    pub fn take_turn<R: tools::InputReader>(&mut self, reader: &mut R) {
         println!("---------------------------------");
         println!("Now it's your turn {}!", self.name);
         println!("Take one of the following actions:");
@@ -27,7 +28,7 @@ impl Player {
             self.engine_boost_launches
         );
         println!("2. Draw an event");
-        engine::run(self);
+        engine::run(self, reader);
     }
 
     pub fn name(&self) -> &String {

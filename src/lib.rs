@@ -1,9 +1,9 @@
 use std::{error::Error, io};
 
+mod constants;
 mod custom_iteration;
 mod player;
-mod constants;
-mod tools;
+pub mod tools;
 
 use crate::custom_iteration::CycleIter;
 use crate::player::Player;
@@ -33,9 +33,9 @@ impl GameController {
         self.players.len()
     }
 
-    pub fn start_game(&mut self) -> Option<&Player> {
+    pub fn start_game<R: tools::InputReader>(&mut self, reader: &mut R) -> Option<&Player> {
         for player in self.players.cycle_iter() {
-            player.take_turn();
+            player.take_turn(reader);
             if player.score() == constants::WINNING_VALUE {
                 return Some(player);
             }
