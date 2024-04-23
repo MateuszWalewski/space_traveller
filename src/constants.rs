@@ -8,8 +8,12 @@ pub const MAX_NUMBER_OF_PLAYERS: usize = 2;
 #[cfg(not(test))]
 pub const WINNING_VALUE: i32 = 10;
 
-pub const ROCKET_ENGINE_BOOST_PREMIUM: i32 = 5;
-pub const ROCKET_ENGINE_LAUNCHES: usize = 5;
+#[cfg(test)]
+pub const BOOST_PREMIUM: i32 = 1000;
+#[cfg(not(test))]
+pub const BOOST_PREMIUM: i32 = 5;
+
+pub const ENGINE_BOOSTS: usize = 5;
 
 pub static EVENT1: &str = "You found a gravity well! You stop and take a rest";
 pub static EVENT2: &str = "Your ship has been hit by meteorite! You have to make a stop for repair";

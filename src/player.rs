@@ -1,12 +1,9 @@
 use crate::constants;
-use crate::tools;
-
-mod controller;
 
 pub struct Player {
     name: String,
     score: i32,
-    engine_boost_launches: usize,
+    boosts: usize,
     winner: bool,
 }
 
@@ -15,21 +12,17 @@ impl Player {
         Player {
             name,
             score: 0,
-            engine_boost_launches: constants::ROCKET_ENGINE_LAUNCHES,
+            boosts: constants::ENGINE_BOOSTS,
             winner: false,
         }
     }
 
-    pub fn take_turn<R: tools::InputReader>(&mut self, reader: &mut R) {
-        controller::run(self, reader);
-    }
-
-    fn update_score(&mut self, points: i32) {
+    pub fn update_score(&mut self, points: i32) {
         self.score += points;
     }
 
-    fn use_rocket_launch(&mut self) {
-        self.engine_boost_launches -= 1;
+    pub fn use_rocket_launch(&mut self) {
+        self.boosts -= 1;
     }
 
     pub fn mark_as_winner(&mut self) {
@@ -46,5 +39,8 @@ impl Player {
 
     pub fn score(&self) -> i32 {
         self.score
+    }
+    pub fn boosts(&self) -> usize {
+        self.boosts
     }
 }
