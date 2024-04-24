@@ -1,12 +1,18 @@
+pub mod interfaces;
+pub mod view;
+
 mod constants;
 mod controller;
 mod player;
-pub mod tools;
-pub mod view;
+mod tools;
+
+pub use crate::tools::take_user_option;
+pub use crate::tools::StdInputReader;
+
 use crate::player::Player;
 use crate::tools::CycleIter;
-use crate::tools::InputReader;
-use crate::view::View;
+use interfaces::InputReader;
+use interfaces::View;
 
 pub struct PreGameManager {
     players: Vec<Player>,
@@ -29,14 +35,13 @@ impl PreGameManager {
     pub fn add_players(mut self) -> GameManager {
         for i in 1..constants::MAX_NUMBER_OF_PLAYERS + 1 {
             self.view.clear_screen();
-            println!("Please type a nick for the player number {}:", i);
+            self.view.display_user_addition_prompt(i);
             let mut nick = String::new();
             self.reader
                 .read_line(&mut nick)
                 .expect("Failed to parse a choice");
-
-            self.view
-                .display_delayed_message(&format!("The player: {} has been added.", nick));
+            nick = nick.trim().to_string();
+            self.view.display_user_added_dialog(&nick);
             self.players.push(Player::new(nick));
         }
         GameManager {
@@ -48,10 +53,11 @@ impl PreGameManager {
 }
 
 impl GameManager {
-    pub fn new<R: tools::InputReader + 'static, V: view::View + 'static>(
-        reader: R,
-        view: V,
-    ) -> PreGameManager {
+    pub fn new<R, V>(reader: R, view: V) -> PreGameManager
+    where
+        R: interfaces::InputReader + 'static,
+        V: interfaces::View + 'static,
+    {
         PreGameManager {
             players: Vec::new(),
             reader: Box::new(reader),
@@ -95,11 +101,7 @@ impl PostGameManager {
 
     pub fn finish_game(&self) -> &Player {
         let winner = self.get_winner();
-        self.view.clear_screen();
-        self.view.display_line();
-        self.view
-            .display_message(&format!("The winner is {}", winner.name()));
-        self.view.display_line();
+        self.view.display_winner(&winner.name());
         winner
     }
 }

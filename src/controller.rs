@@ -1,25 +1,17 @@
-use crate::constants;
-use crate::tools;
-use crate::InputReader;
-use crate::Player;
-use crate::View;
+use crate::{constants, interfaces, tools, Player};
 use std::error::Error;
 
-//TODO: Use the "where" clause to make it clearer!
-pub fn run(model: &mut Player, reader: &mut Box<dyn InputReader>, view: &Box<dyn View>) {
+pub fn run<R, V>(model: &mut Player, reader: &mut Box<R>, view: &Box<V>)
+where
+    R: interfaces::InputReader + 'static + ?Sized,
+    V: interfaces::View + 'static + ?Sized,
+{
     loop {
-        view.clear_screen();
-        view.display_user_screen(
-            &model.name(),
-            &model.boosts().to_string(),
-            &model.score().to_string(),
-        );
-
+        view.display_user_screen(&model.name(), model.boosts(), model.score());
         let choice = match tools::take_user_option(reader) {
             Ok(num) => num,
             Err(_) => {
-                println!("Wrong input... Enter a number please!");
-                view.delay_window(1500);
+                view.display_delayed_dialog("Wrong input... Enter a number please!", 1000);
                 continue;
             }
         };
@@ -28,28 +20,21 @@ pub fn run(model: &mut Player, reader: &mut Box<dyn InputReader>, view: &Box<dyn
             1 => {
                 match launch_boost_rockets(model) {
                     Ok(()) => {
-                        view.clear_screen();
-                        view.display_fancy_message(&format!(
-                            "You travel with the speed of light! The space is sqeezeed! (+{}) pts",
-                            constants::BOOST_PREMIUM
-                        ));
+                        view.display_first_gameplay_option_dialog();
                         break;
                     }
                     Err(e) => {
-                        println!("{}", e);
-                        view.delay_window(2000);
+                        view.display_delayed_dialog(&e.to_string(), 1000);
                     }
                 };
             }
             2 => {
-                view.clear_screen();
                 let event = explore_the_universe(model);
-                view.display_fancy_message(&format!("{}: {} pts", event.0, event.1));
+                view.display_second_gemaplay_option_dialog(event.0, event.1);
                 break;
             }
             _ => {
-                println!("Option unavailable. Try again!");
-                view.delay_window(1500);
+                view.display_delayed_dialog("Option unavailable. Try again!", 1000);
             }
         }
     }
@@ -102,11 +87,9 @@ mod tests {
     fn using_all_rocket_launches_works() {
         let name = String::from("rick56");
         let mut player = Player::new(name);
-        _ = launch_boost_rockets(&mut player);
-        _ = launch_boost_rockets(&mut player);
-        _ = launch_boost_rockets(&mut player);
-        _ = launch_boost_rockets(&mut player);
-        _ = launch_boost_rockets(&mut player);
+        for _ in 0..constants::ENGINE_BOOSTS {
+            _ = launch_boost_rockets(&mut player);
+        }
         let result = launch_boost_rockets(&mut player);
         assert_eq!(
             result.unwrap_err().to_string(),
