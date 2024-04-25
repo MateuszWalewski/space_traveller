@@ -1,6 +1,7 @@
 use crate::{constants, interfaces, tools, Player};
 use std::error::Error;
 
+/// The Controller part.
 pub fn run<R, V>(model: &mut Player, reader: &mut Box<R>, view: &Box<V>)
 where
     R: interfaces::InputReader + 'static + ?Sized,

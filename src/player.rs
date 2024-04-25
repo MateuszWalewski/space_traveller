@@ -1,5 +1,6 @@
 use crate::constants;
 
+/// The model part.
 pub struct Player {
     name: String,
     score: i32,

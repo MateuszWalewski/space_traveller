@@ -1,3 +1,5 @@
+/// The example View part implementing public trait methods.
+/// It is an example of the GUI component, which is fully independent from the other parts.
 use crate::{constants, interfaces::View};
 use std::{
     io::{stdout, Write},
