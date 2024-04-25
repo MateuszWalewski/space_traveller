@@ -33,15 +33,24 @@ where
                 view.display_second_gemaplay_option_dialog(event.0, event.1);
                 break;
             }
+            5 => {
+                teleport_to_the_planet(model);
+                view.display_secret_gameplay_option_dialog();
+                break;
+            }
             _ => {
                 view.display_delayed_dialog("Option unavailable. Try again!", 1000);
             }
         }
     }
 
-    if is_winning_condition_meet(model) {
+    if is_winning_condition_met(model) {
         model.mark_as_winner();
     }
+}
+
+fn teleport_to_the_planet(model: &mut Player) {
+    model.update_score(constants::TELEPORT_PREMIUM);
 }
 
 fn launch_boost_rockets(model: &mut Player) -> Result<(), Box<dyn Error>> {
@@ -50,7 +59,7 @@ fn launch_boost_rockets(model: &mut Player) -> Result<(), Box<dyn Error>> {
         model.use_rocket_launch();
         Ok(())
     } else {
-        Err("You've used all launches... Try other option!".into())
+        Err("You've used all your launches... Try another option!".into())
     }
 }
 
@@ -60,7 +69,7 @@ fn explore_the_universe(model: &mut Player) -> (&'static str, i32) {
     event
 }
 
-fn is_winning_condition_meet(model: &Player) -> bool {
+fn is_winning_condition_met(model: &Player) -> bool {
     model.score() >= constants::WINNING_VALUE
 }
 
@@ -76,13 +85,23 @@ mod tests {
     }
 
     #[test]
-    fn player_wins_the_game_after_achieving_win_condition_works() {
+    fn player_wins_the_game_after_achieving_win_condition_works_1() {
         let name = String::from("rick56");
         let mut player = Player::new(name);
-        _ = launch_boost_rockets(&mut player);
-        _ = launch_boost_rockets(&mut player);
-        assert!(is_winning_condition_meet(&player));
+        teleport_to_the_planet(&mut player);
+        assert!(is_winning_condition_met(&player));
     }
+
+    #[test]
+    fn player_wins_the_game_after_achieving_win_condition_works_2() {
+        let name = String::from("rick56");
+        let mut player = Player::new(name);
+        while !is_winning_condition_met(&player) {
+            _ = explore_the_universe(&mut player);
+        }
+        assert!(is_winning_condition_met(&player));
+    }
+
     #[test]
     fn using_all_rocket_launches_works() {
         let name = String::from("rick56");
@@ -93,7 +112,7 @@ mod tests {
         let result = launch_boost_rockets(&mut player);
         assert_eq!(
             result.unwrap_err().to_string(),
-            "You've used all launches... Try other option!"
+            "You've used all your launches... Try another option!"
         );
     }
 

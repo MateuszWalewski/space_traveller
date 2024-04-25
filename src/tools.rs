@@ -6,7 +6,7 @@ use rand::Rng;
 use std::{error::Error, io};
 
 pub fn draw_event() -> (&'static str, i32) {
-    let number = rand::thread_rng().gen_range(0..=3);
+    let number = rand::thread_rng().gen_range(0..=constants::EVENTS.len() - 1);
     return constants::EVENTS[number as usize];
 }
 
@@ -20,7 +20,15 @@ where
     Ok(choice)
 }
 
-// TODO: Add the documentation!
+pub fn take_user_name<R>(reader: &mut Box<R>) -> Result<String, Box<dyn Error>>
+where
+    R: interfaces::InputReader + 'static + ?Sized,
+{
+    let mut nick = String::new();
+    reader.read_line(&mut nick)?;
+    nick = nick.trim().to_string();
+    Ok(nick)
+}
 pub struct CirculatingIterator<'a, T> {
     container: &'a mut Vec<T>,
     index: usize,

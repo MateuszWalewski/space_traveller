@@ -33,21 +33,17 @@ impl<'a> InputReader for CustomInputReader<'a> {
 
 pub struct TestView;
 impl View for TestView {
-    fn display_message(&self, _message: &str) {}
     fn display_delayed_dialog(&self, _message: &str, _millis: u64) {}
     fn display_user_addition_prompt(&self, _player_number: usize) {}
     fn display_user_added_dialog(&self, _name: &str) {}
     fn display_user_stats_bar(&self, _name: &str, _score: &str) {}
     fn display_first_option_menu(&self, _rockets: &str) {}
     fn display_second_option_menu(&self) {}
+    fn display_secret_gameplay_option_dialog(&self) {}
     fn display_user_screen(&self, _name: &str, _rockets: usize, _score: i32) {}
     fn display_first_gameplay_option_dialog(&self) {}
     fn display_second_gemaplay_option_dialog(&self, _event: &str, _points: i32) {}
     fn display_winner(&self, _name: &str) {}
-    fn display_line(&self) {}
-    fn display_short_line(&self) {}
-    fn delay_window(&self, _millis: u64) {}
-    fn clear_screen(&self) {}
 }
 
 #[cfg(test)]

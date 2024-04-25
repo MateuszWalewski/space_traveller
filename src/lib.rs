@@ -1,7 +1,7 @@
+pub mod constants;
 pub mod interfaces;
 pub mod view;
 
-mod constants;
 mod controller;
 mod player;
 mod tools;
@@ -34,13 +34,9 @@ pub struct PostGameManager {
 impl PreGameManager {
     pub fn add_players(mut self) -> GameManager {
         for i in 1..constants::MAX_NUMBER_OF_PLAYERS + 1 {
-            self.view.clear_screen();
             self.view.display_user_addition_prompt(i);
-            let mut nick = String::new();
-            self.reader
-                .read_line(&mut nick)
-                .expect("Failed to parse a choice");
-            nick = nick.trim().to_string();
+            let nick =
+                tools::take_user_name(&mut self.reader).expect("Any string sequence should work");
             self.view.display_user_added_dialog(&nick);
             self.players.push(Player::new(nick));
         }
@@ -70,7 +66,7 @@ impl GameManager {
             controller::run(player, &mut self.reader, &self.view);
             if player.is_winner() {
                 return PostGameManager {
-                    // we must return since it is infinite loop
+                    // must return since it is an infinite loop
                     players: self.players,
                     view: self.view,
                 };
@@ -96,7 +92,7 @@ impl PostGameManager {
         self.players
             .iter()
             .find(|x| x.is_winner())
-            .expect("On this stage we have the winner for sure!")
+            .expect("At this stage we have the winner for sure!")
     }
 
     pub fn finish_game(&self) -> &Player {

@@ -14,6 +14,7 @@ impl View for ConsoleView {
         self.delay_window(millis);
     }
     fn display_user_addition_prompt(&self, player_number: usize) {
+        self.clear_screen();
         println!(
             "Please type a nick for the player number {}:",
             &player_number.to_string()
@@ -59,7 +60,7 @@ impl View for ConsoleView {
     }
     fn display_winner(&self, name: &str) {
         self.clear_screen();
-        self.display_short_line();
+        self.display_line();
         let msg1 = format!(
             "{}{}{}",
             color::Fg(color::White),
@@ -67,21 +68,11 @@ impl View for ConsoleView {
             color::Fg(color::Reset)
         );
         print!("{}", color::Fg(color::Yellow));
-        println!("The winner is {}!", msg1);
+        println!("Congratulations {}!", msg1);
+        print!("{}", color::Fg(color::Magenta));
+        println!("You set foot on the unexplored planet first!");
         print!("{}", color::Fg(color::Reset));
-        self.display_short_line();
-    }
-
-    fn display_message(&self, message: &str) {
-        println!("{}", message);
-    }
-
-    fn display_line(&self) {
-        self.display_message("-----------------------------------------");
-    }
-
-    fn display_short_line(&self) {
-        self.display_message("---------------------");
+        self.display_line();
     }
 
     fn display_first_option_menu(&self, rockets: &str) {
@@ -91,7 +82,7 @@ impl View for ConsoleView {
     }
     fn display_second_option_menu(&self) {
         print!("{}", color::Fg(color::Magenta));
-        println!("2. Explore the universe!");
+        println!("2. Explore the Universe!");
         print!("{}", color::Fg(color::Reset));
     }
 
@@ -104,26 +95,45 @@ impl View for ConsoleView {
         self.display_second_option_menu();
     }
 
-    fn delay_window(&self, millis: u64) {
-        thread::sleep(Duration::from_millis(millis));
-    }
-
     fn display_first_gameplay_option_dialog(&self) {
         self.clear_screen();
-        print!("{}", color::Fg(color::Red));
+        print!("{}", color::Fg(color::Yellow));
         println!(
-            "You travel with the speed of light! The space is sqeezeed! (+{}) pts",
+            "You are traveling at the speed of light! The space is squeezed! (+{}) pts",
             constants::BOOST_PREMIUM
         );
         print!("{}", color::Fg(color::Reset));
-        self.delay_window(2000);
+        self.delay_window(3000);
     }
     fn display_second_gemaplay_option_dialog(&self, event: &str, points: i32) {
         self.clear_screen();
-        print!("{}", color::Fg(color::Red));
+        print!("{}", color::Fg(color::Yellow));
         println!("{}: {} pts", event, points);
         print!("{}", color::Fg(color::Reset));
+        self.delay_window(3000);
+    }
+
+    fn display_secret_gameplay_option_dialog(&self) {
+        self.clear_screen();
+        print!("{}", color::Fg(color::Blue));
+        println!("Css...!!! You've discovered a secret teleporter that transports you to the planet's gravitational field!!");
+        println!("Congrats! P.S. Don't share your secret ;)");
+        print!("{}", color::Fg(color::Reset));
         self.delay_window(2000);
+    }
+}
+
+impl ConsoleView {
+    fn display_message(&self, message: &str) {
+        println!("{}", message);
+    }
+
+    fn display_line(&self) {
+        self.display_message("--------------------------------------------");
+    }
+
+    fn delay_window(&self, millis: u64) {
+        thread::sleep(Duration::from_millis(millis));
     }
 
     fn clear_screen(&self) {
