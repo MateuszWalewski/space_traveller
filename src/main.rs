@@ -1,9 +1,10 @@
-use space_traveller::CycleIter;
+use space_traveller::{view, GameManager, StdInputReader};
 
 fn main() {
-    let container = vec![1, 4, 5, 7];
-
-    for i in container.cycle_iter().take(9) {
-        println!("item: {}", i);
-    }
+    let std_reader = StdInputReader;
+    let console_view = view::ConsoleView;
+    let gm = GameManager::new(std_reader, console_view);
+    let gm = gm.add_players();
+    let gm = gm.start_game();
+    gm.finish_game();
 }
