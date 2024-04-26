@@ -16,11 +16,10 @@ impl<'a, T> Iterator for CirculatingIterator<'a, T> {
     }
 }
 
-// here compiler add the lifetimes by itself under the hood. Recall that !
 pub trait CycleIter<T> {
     fn cycle_iter(&self) -> CirculatingIterator<T>;
 }
-// here compiler add the lifetimes by itself under the hood. Recall that !
+
 impl<T> CycleIter<T> for Vec<T> {
     fn cycle_iter(&self) -> CirculatingIterator<T> {
         CirculatingIterator {
