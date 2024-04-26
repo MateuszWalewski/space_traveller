@@ -1,8 +1,7 @@
 //! # Space Traveller
 //!
 //! `space_traveller` is a simple command-line game engine based on the MVC architecture, centered around cosmic space.
-//! It servers as a starting point for crafting epic, old-school RPGs enriching the
-//! knowledgle of the universe.
+//! It may serve as a starting point for crafting epic, old-school RPGs, enriching the knowledge of the universe.
 
 pub mod constants;
 pub mod interfaces;
@@ -38,8 +37,8 @@ pub struct PostGameManager {
 }
 
 impl PreGameManager {
-    /// Adds players to the game. It consumes the previous state making
-    /// another, representing the next phase of the game.
+    /// Adds players to the game.
+    /// It consumes the previous state making another representing the next phase of the game.
     pub fn add_players(mut self) -> GameManager {
         for i in 1..constants::MAX_NUMBER_OF_PLAYERS + 1 {
             self.view.display_user_addition_prompt(i);
@@ -57,9 +56,9 @@ impl PreGameManager {
 }
 
 impl GameManager {
-    /// The main game object creator. Custom reader and viewer injection is
-    /// performed using public trait objects, allowing for full customization,
-    /// even from external crates.
+    /// The main game object creator.
+    /// Custom reader and viewer injection is performed using public trait objects,
+    /// allowing for full customization.
     pub fn new<R, V>(reader: R, view: V) -> PreGameManager
     where
         R: interfaces::InputReader + 'static,
@@ -71,8 +70,8 @@ impl GameManager {
             view: Box::new(view),
         }
     }
-    /// Starts the turn-based game. It iterates over the players
-    /// in a cycle until a winning condition is met.
+    /// Starts the turn-based game.
+    /// It iterates over the players in a cycle until a winning condition is met.
     /// Consumes the current game state and return the next-phase object.
     pub fn start_game(mut self) -> PostGameManager {
         for player in self.players.cycle_iter() {
