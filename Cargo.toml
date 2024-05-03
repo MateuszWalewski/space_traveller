@@ -1,11 +1,11 @@
 [package]
 name = "space_traveller"
 license = "MIT"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
 description = "A simple command-line game engine based on the MVC architecture, centered around cosmic space."
 readme = "README.md"
-
+repository = "https://github.com/MateuszWalewski/space_traveller"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
